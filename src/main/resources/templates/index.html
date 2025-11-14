@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout('Home', ~{::section})}">
+<body>
+<section>
+    <!-- Hero Section -->
+    <div class="p-5 mb-5 text-white rounded shadow-lg"
+         style="background: linear-gradient(135deg, #1f1c2c, #928dab);">
+        <div class="col-md-10 px-0">
+            <h1 class="display-4 fw-bold">✨ Share Your Voice, Inspire the World</h1>
+            <p class="lead my-3">Join our community and turn your ideas into stories that matter.</p>
+            <div class="mt-4">
+                <p th:if="${currentUser == null}">
+                    <a href="/register" class="btn btn-lg btn-light fw-bold me-3 shadow-sm">🚀 Join Now</a>
+                    <a href="/login" class="btn btn-lg btn-outline-light fw-bold shadow-sm">🔑 Login</a>
+                </p>
+                <p th:if="${currentUser != null}" class="lead mb-0">
+                    <span class="me-3 fs-5">Hello, <strong th:text="${currentUser.username}"></strong> 👋</span>
+                    <a href="/posts/new" class="btn btn-lg btn-success fw-bold shadow-sm">📝 Create New Post</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="container">
+        <form th:action="@{/}" method="get" class="row g-2 mb-4">
+            <div class="col-auto">
+                <input type="text" class="form-control" name="q" placeholder="Search posts" th:value="${q}">
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" name="tag" placeholder="Filter by tag" th:value="${tag}">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Latest Posts -->
+    <div class="container">
+        <h3 class="pb-4 mb-4 border-bottom fw-bold">📰 Latest Posts</h3>
+
+        <div th:if="${posts.empty}" class="alert alert-info shadow-sm text-center">
+            No posts yet. Be the first to start the conversation! 🎉
+        </div>
+
+        <div class="row g-4" th:if="${!posts.empty}">
+            <div class="col-md-4" th:each="post : ${posts}">
+                <div class="card h-100 shadow-lg border-0 rounded-4 post-card">
+                    <div class="card-body">
+                        <div th:if="${post.imageUrl}" class="mb-2">
+                            <img th:src="@{${post.imageUrl}}" alt="Featured" class="img-fluid rounded" />
+                        </div>
+                        <h5 class="card-title fw-bold">
+                            <a th:href="@{/posts/{id}(id=${post.id})}"
+                               th:text="${post.title}"
+                               class="text-decoration-none text-dark"></a>
+                        </h5>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-calendar-event"></i>
+                            <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            · <i class="bi bi-person"></i>
+                            <span th:text="${post.author.username}"></span>
+                        </p>
+                        <p class="card-text" th:text="${#strings.abbreviate(post.content, 150)}"></p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between align-items-center">
+                        <a th:href="@{/posts/{id}(id=${post.id})}"
+                           class="btn btn-sm btn-outline-primary rounded-pill">Read More</a>
+                        <span th:if="${currentUser != null && currentUser.id == post.author.id}">
+                            <a th:href="@{/posts/{id}/edit(id=${post.id})}"
+                               class="btn btn-sm btn-outline-secondary rounded-pill">Edit</a>
+                            <form th:action="@{/posts/{id}/delete(id=${post.id})}"
+                                  method="post" class="d-inline">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger rounded-pill"
+                                        onclick="return confirm('Delete this post?')">Delete</button>
+                            </form>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-4" th:if="${postPage != null}">
+            <a class="btn btn-outline-secondary btn-sm"
+               th:if="${postPage.hasPrevious()}"
+               th:href="@{/(page=${postPage.number - 1}, size=${postPage.size}, q=${q})}">Previous</a>
+            <span>Page <span th:text="${postPage.number + 1}">1</span> of <span th:text="${postPage.totalPages}">1</span></span>
+            <a class="btn btn-outline-secondary btn-sm"
+               th:if="${postPage.hasNext()}"
+               th:href="@{/(page=${postPage.number + 1}, size=${postPage.size}, q=${q})}">Next</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .post-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+</style>
+</body>
+</html>

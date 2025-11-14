@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout('Edit Post', ~{::section})}">
+<body>
+<section>
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Edit Post</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/posts/{id}/edit(id=${post.id})}" method="post" enctype="multipart/form-data">
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-bold">Title</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                   th:value="${post.title}" required>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="mb-3">
+                            <label for="content" class="form-label fw-bold">Content</label>
+                            <textarea class="form-control" id="content" name="content"
+                                      rows="10" required th:text="${post.content}"></textarea>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            <label for="tags" class="form-label fw-bold">Tags (comma-separated)</label>
+                            <input type="text" class="form-control" id="tags" name="tags"
+                                   th:value="${#strings.listJoin(post.tags.^[#this!=null]?.![name], ', ')}" />
+                        </div>
+
+                        <!-- Status + Publish At -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label fw-bold">Status</label>
+                                <select id="status" name="status" class="form-select">
+                                    <option value="PUBLISHED" th:selected="${post.status?.name() == 'PUBLISHED'}">Published</option>
+                                    <option value="DRAFT" th:selected="${post.status?.name() == 'DRAFT'}">Draft</option>
+                                    <option value="SCHEDULED" th:selected="${post.status?.name() == 'SCHEDULED'}">Scheduled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="publishedAt" class="form-label fw-bold">Publish At (optional)</label>
+                                <input type="datetime-local" id="publishedAt" name="publishedAt" class="form-control"
+                                       th:value="${post.publishedAt != null ? #temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm') : ''}" />
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label fw-bold">Featured Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+                            <div class="mt-2" th:if="${post.imageUrl}">
+                                <img th:src="${post.imageUrl}" alt="Featured" style="max-width: 200px;" />
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/posts/{id}(id=${post.id})}"
+                               class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update Post</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

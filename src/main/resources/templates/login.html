@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout('Login', ~{::section})}">
+<body>
+<section>
+    <div class="row min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header text-center text-white py-4" style="background: linear-gradient(45deg, #28a745, #20c997);">
+                    <h3 class="fw-bold mb-0">Welcome Back</h3>
+                    <p class="mb-0 small opacity-75">Login to continue</p>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <input type="text" class="form-control form-control-lg rounded-pill" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <input type="password" class="form-control form-control-lg rounded-pill" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light py-3">
+                    <p class="mb-0">Don't have an account?
+                        <a href="/register" class="fw-semibold text-success text-decoration-none">Register now</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
